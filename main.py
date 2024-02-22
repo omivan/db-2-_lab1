@@ -2,7 +2,6 @@ import threading
 import time
 import psycopg2
 
-# from psycopg2.extensions import ISOLATION_LEVEL_READ_COMMITTED
 
 db_params = {
     'database': 'lab1',
@@ -14,7 +13,6 @@ db_params = {
 
 def create_connection():
     conn = psycopg2.connect(**db_params)
-    # conn.set_isolation_level(ISOLATION_LEVEL_READ_COMMITTED)
     return conn
 
 
@@ -32,7 +30,6 @@ def initialize_db():
                 );
             """)
 
-            # Initialize the table with a row
             cursor.execute("""
                 INSERT INTO user_counter (user_id, counter, version) 
                 VALUES (1, 0, 0);
