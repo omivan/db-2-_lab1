@@ -5,7 +5,7 @@ import psycopg2
 
 db_params = {
     'database': 'lab1',
-    'user': 'omivan',
+    'user': 'simon',
     'host': 'localhost',
     'port': '5432'
 }
@@ -78,19 +78,6 @@ def update_counter_with_row_lock():
                 conn.commit()
 
 
-def test_method(func):
-    initialize_db()
-    threads = [threading.Thread(target=func) for _ in range(10)]
-    start_time = time.time()
-    for thread in threads:
-        thread.start()
-    for thread in threads:
-        thread.join()
-    end_time = time.time()
-    print(f"Total execution time for {func.__name__}: {end_time - start_time} seconds")
-    print(f"Counter is {get_final_counter()}")
-
-
 def update_counter_with_optimistic_locking():
     conn = create_connection()
     with conn:
@@ -108,24 +95,38 @@ def update_counter_with_optimistic_locking():
                         break
 
 
+def test_method(func):
+    initialize_db()
+    threads = [threading.Thread(target=func) for _ in range(10)]
+    start_time = time.time()
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    end_time = time.time()
+    print(f"Total execution time for {func.__name__}: {round(end_time - start_time, 2)} seconds")
+    print(f"Counter is {get_final_counter()}")
+
+
 if __name__ == "__main__":
+    print("Started execution")
     test_method(lost_update)
-    # Total execution time for lost_update: 33.232243061065674 seconds
-    # Counter is 10411
+    # Total execution time for lost_update: 12.74 seconds
+    # Counter is 10736
 
 
     test_method(in_place_update)
-    # Total execution time for in_place_update: 29.174508094787598 seconds
+    # Total execution time for in_place_update: 11.08 seconds
     # Counter is 100000
 
 
     test_method(update_counter_with_row_lock)
-    # Total execution time for update_counter_with_row_lock: 53.72469782829285 seconds
+    # Total execution time for update_counter_with_row_lock: 18.16 seconds
     # Counter is 100000
 
 
     test_method(update_counter_with_optimistic_locking)
-    # Total execution time for update_counter_with_optimistic_locking: 224.73676705360413 seconds
+    # Total execution time for update_counter_with_optimistic_locking: 83.57 seconds
     # Counter is 100000
 
 
